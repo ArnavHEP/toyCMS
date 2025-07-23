@@ -7,7 +7,7 @@ MyDetectorConstruction::MyDetectorConstruction()
 
 MyDetectorConstruction::~MyDetectorConstruction()
 {	
-	//delete fSolenoidField;
+    //delete fSolenoidField;
     //delete fReturnField;
     //delete fSolenoidFieldMgr;
     //delete fReturnFieldMgr;
