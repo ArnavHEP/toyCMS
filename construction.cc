@@ -254,28 +254,28 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	//**********************************************************************************
 
 	//Solenoid
-    G4double solenoidInnerRadius = 2.95*m;
-    G4double solenoidOuterRadius = 3.80*m;
-    G4double solenoidHalfLength  = 6.6*m;
+	G4double solenoidInnerRadius = 2.95*m;
+	G4double solenoidOuterRadius = 3.80*m;
+	G4double solenoidHalfLength  = 6.6*m;
 
-    G4Tubs* solidSolenoid = new G4Tubs("solidSolenoid", solenoidInnerRadius, solenoidOuterRadius, solenoidHalfLength, 0.*deg, 360.*deg);
-    G4LogicalVolume* logicSolenoid = new G4LogicalVolume(solidSolenoid, NbTi, "logicSolenoid");
-    G4VPhysicalVolume* physSolenoid = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicSolenoid, "physSolenoid", logicWorld, false, 0, overlapCheck);
+	G4Tubs* solidSolenoid = new G4Tubs("solidSolenoid", solenoidInnerRadius, solenoidOuterRadius, solenoidHalfLength, 0.*deg, 360.*deg);
+	G4LogicalVolume* logicSolenoid = new G4LogicalVolume(solidSolenoid, NbTi, "logicSolenoid");
+	G4VPhysicalVolume* physSolenoid = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicSolenoid, "physSolenoid", logicWorld, false, 0, overlapCheck);
 
 	//**********************************************************************************
 
 	//Stainless Steel layer after Solenoid
-    G4double steelInnerRadius3 = 3.80*m;
-    G4double steelOuterRadius3 = 3.84*m;
-    G4double steelHalfLength3  = 6.6*m; 
+	G4double steelInnerRadius3 = 3.80*m;
+    	G4double steelOuterRadius3 = 3.84*m;
+    	G4double steelHalfLength3  = 6.6*m; 
 
-    G4Tubs* solidSteel3 = new G4Tubs("solidSteel3", steelInnerRadius3, steelOuterRadius3, steelHalfLength3, 0.*deg, 360.*deg);
-    G4LogicalVolume* logicSteel3 = new G4LogicalVolume(solidSteel3, StainlessSteel, "logicSteel3");
-    G4VPhysicalVolume* physSteel3 = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicSteel3, "physSteel3", logicWorld, false, 0, overlapCheck);
+    	G4Tubs* solidSteel3 = new G4Tubs("solidSteel3", steelInnerRadius3, steelOuterRadius3, steelHalfLength3, 0.*deg, 360.*deg);
+    	G4LogicalVolume* logicSteel3 = new G4LogicalVolume(solidSteel3, StainlessSteel, "logicSteel3");
+    	G4VPhysicalVolume* physSteel3 = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicSteel3, "physSteel3", logicWorld, false, 0, overlapCheck);
 
-    G4VisAttributes* steelVis3 = new G4VisAttributes(G4Colour(0.7,0.7,0.7,0.7)); // metallic gray
-    steelVis3->SetForceSolid(true);
-    logicSteel3->SetVisAttributes(steelVis3);
+    	G4VisAttributes* steelVis3 = new G4VisAttributes(G4Colour(0.7,0.7,0.7,0.7)); // metallic gray
+    	steelVis3->SetForceSolid(true);
+    	logicSteel3->SetVisAttributes(steelVis3);
 
 	//**********************************************************************************
 
