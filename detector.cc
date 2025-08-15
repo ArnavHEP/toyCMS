@@ -27,7 +27,7 @@ G4bool MySensitiveDetector::ProcessHits(G4Step *Step, G4TouchableHistory *)
 	G4int copyNo = touchable->GetCopyNumber();
 
 	G4VPhysicalVolume *physVol = touchable->GetVolume();
-	G4ThreeVector posDetector = physVol->GetTranslation();
+	G4ThreeVector posDetector = preStepPoint->GetPosition();
 
 	auto hitTime = preStepPoint->GetGlobalTime();
 
@@ -35,6 +35,11 @@ G4bool MySensitiveDetector::ProcessHits(G4Step *Step, G4TouchableHistory *)
 	if (edep==0.) return true;
 
 	G4int evt = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+	if (prevEvent!=evt)
+	{
+		G4cout << "Event " << evt+1 << G4endl << G4endl; 
+		prevEvent = evt;
+	}
 
 	G4AnalysisManager *analysisManager = G4AnalysisManager::Instance();
 	

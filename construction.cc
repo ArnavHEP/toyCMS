@@ -6,12 +6,7 @@ MyDetectorConstruction::MyDetectorConstruction()
 {}
 
 MyDetectorConstruction::~MyDetectorConstruction()
-{	
-    //delete fSolenoidField;
-    //delete fReturnField;
-    //delete fSolenoidFieldMgr;
-    //delete fReturnFieldMgr;
-}
+{	}
 
 G4VPhysicalVolume *MyDetectorConstruction::Construct()
 {	
@@ -71,6 +66,10 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	G4Material *Aluminum = new G4Material("Aluminum", 2.70*g/cm3, 1);
 	Aluminum->AddElement(elAl, 1);
 
+	// Copper
+	G4Material *Cu = new G4Material("Cu", 8.96*g/cm3, 1);
+	Cu->AddElement(elCu, 1);
+
 	// Argon Gas
 	G4Material *ArgonGas = new G4Material("ArgonGas", 1.662*mg/cm3, 1, kStateGas, 293.15*kelvin, 1*atmosphere);
 	ArgonGas->AddElement(elAr, 1);
@@ -110,239 +109,292 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	//parameters (rotation, location, logic volume, name, mother volume, boolean operation, copy number, times created, checks for overlap)
 
 	//**********************************************************************************
-	/*
-	//Magnetic field inside solenoid
-	G4Tubs* solenoidFieldSolid = new G4Tubs("solenoidFieldTubs", 0.*m, 2.95*m, 6.6*m, 0.*deg, 360.*deg);
-	fSolenoidFieldLogical = new G4LogicalVolume(solenoidFieldSolid, Vacuum, "solenoidFieldLogical");
-	new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), fSolenoidFieldLogical, "solenoidFieldPhysical", logicWorld, false, 0, overlapCheck);
-	fSolenoidFieldLogical->SetVisAttributes(G4VisAttributes::GetInvisible());
-
-	//Magnetic field outside solenoid
-	G4Tubs* returnFieldSolid = new G4Tubs("returnFieldTubs", 3.80*m, 7.31*m, 6.6*m, 0.*deg, 360.*deg);
-	fReturnFieldLogical = new G4LogicalVolume(returnFieldSolid, Vacuum, "returnFieldLogical");
-	new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), fReturnFieldLogical, "returnFieldPhysical", logicWorld, false, 0, overlapCheck);
-	fReturnFieldLogical->SetVisAttributes(G4VisAttributes::GetInvisible());
-	*/
-	//**********************************************************************************
 
 	//Beam Pipe
-	G4double pipeInnerRadius = 2.75*cm;
-	G4double pipeOuterRadius = 3.0*cm;
-	G4double pipeHalfLength  = 200.0*cm;
+	if(useBeamPipe)
+	{
+		G4double pipeInnerRadius = 2.75*cm;
+		G4double pipeOuterRadius = 3.0*cm;
+		G4double pipeHalfLength  = 200.0*cm;
 
-	G4Tubs* solidBeamPipe = new G4Tubs("solidBeamPipe", pipeInnerRadius, pipeOuterRadius, pipeHalfLength, 0.*deg, 360.*deg);
-	G4LogicalVolume* logicBeamPipe = new G4LogicalVolume(solidBeamPipe, Aluminum, "logicBeamPipe");
-	G4VPhysicalVolume* physBeamPipe = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicBeamPipe, "physBeamPipe", logicWorld, false, 0, overlapCheck);
+		G4Tubs* solidBeamPipe = new G4Tubs("solidBeamPipe", pipeInnerRadius, pipeOuterRadius, pipeHalfLength, 0.*deg, 360.*deg);
+		G4LogicalVolume* logicBeamPipe = new G4LogicalVolume(solidBeamPipe, Aluminum, "logicBeamPipe");
+		G4VPhysicalVolume* physBeamPipe = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicBeamPipe, "physBeamPipe", logicWorld, false, 0, overlapCheck);
 
-	G4VisAttributes* pipeVis = new G4VisAttributes(G4Colour(1.,0.,0.)); // red
-	pipeVis->SetForceSolid(true);
-	logicBeamPipe->SetVisAttributes(pipeVis);
+		G4VisAttributes* pipeVis = new G4VisAttributes(G4Colour(1.,0.,0.)); // red
+		pipeVis->SetForceSolid(true);
+		logicBeamPipe->SetVisAttributes(pipeVis);
+	}
 	
 	//**********************************************************************************
 
 	//Absorber
-	G4double absorberInnerRadius = 1.00*m;
-	G4double absorberOuterRadius = 1.13*m; //max allowed : 1.13
-	G4double absorberHalfLength  = 2.85*m;
+	if(useAbsorber)
+	{
+		G4double absorberInnerRadius = 0.50*m;
+		G4double absorberOuterRadius = 1.10*m; //max allowed : 1.13
+		G4double absorberHalfLength  = 2.85*m;
 
-	G4Tubs* solidAbsorber = new G4Tubs("solidAbsorber", absorberInnerRadius, absorberOuterRadius, absorberHalfLength, 0.*deg, 360.*deg);
-	G4LogicalVolume* logicAbsorber = new G4LogicalVolume(solidAbsorber, Lead, "logicAbsorber");
-	G4VPhysicalVolume* physAbsorber = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicAbsorber, "physAbsorber", logicWorld, false, 0, overlapCheck);
+		G4Tubs* solidAbsorber = new G4Tubs("solidAbsorber", absorberInnerRadius, absorberOuterRadius, absorberHalfLength, 0.*deg, 360.*deg);
+		G4LogicalVolume* logicAbsorber = new G4LogicalVolume(solidAbsorber, Cu, "logicAbsorber");
+		G4VPhysicalVolume* physAbsorber = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicAbsorber, "physAbsorber", logicWorld, false, 0, overlapCheck);
 
-	G4VisAttributes* absorberVis = new G4VisAttributes(G4Colour(0.8,0.8,0.8,0.85)); // light gray
-	absorberVis->SetForceSolid(true);
-	logicAbsorber->SetVisAttributes(absorberVis);
+		G4VisAttributes* absorberVis = new G4VisAttributes(G4Colour(0.8,0.8,0.8,0.85)); // light gray
+		absorberVis->SetForceSolid(true);
+		logicAbsorber->SetVisAttributes(absorberVis);
+	}
 
 	//**********************************************************************************
 
 	//ECAL
-	G4double ecalInnerRadius = 1.29*m;
-	G4double ecalOuterRadius = 1.77*m;
-	G4double ecalHalfLength  = 3.6*m;
-	G4double ecalCrystalHalfSizeX = 0.23*m;
-	G4double ecalCrystalHalfSizeY = 0.045*m; 
-	G4double ecalCrystalHalfSizeZ  = 0.045*m;
-	G4double nEcalRows = 80;
-	G4double nEcalRings = 90;
-
-	G4Box* solidECAL = new G4Box("solidECAL", ecalCrystalHalfSizeX, ecalCrystalHalfSizeY, ecalCrystalHalfSizeZ);
-	logicECAL = new G4LogicalVolume(solidECAL, PbWO4, "logicECAL");
-
-	for(G4int i = 0; i < nEcalRows; i++) 
+	if(useECAL && !calibrationMode)
 	{
-		for(G4int j = 0; j < nEcalRings; j++) 
-		{
-			G4Rotate3D rotZEcal(j*(360/nEcalRings)*deg, G4ThreeVector(0,0,1));
-			G4Translate3D transXEcal(G4ThreeVector(ecalCrystalHalfSizeY/tan((360/nEcalRings)/2*deg)*mm + ecalCrystalHalfSizeX*mm, 0*mm, -ecalHalfLength+(2*i*ecalCrystalHalfSizeZ)*mm));
-			G4Transform3D transformEcal = (rotZEcal)*(transXEcal);
+		G4double ecalInnerRadius = 1.29*m;
+		G4double ecalOuterRadius = 1.77*m;
+		G4double ecalHalfLength  = 3.6*m;
+		G4double ecalCrystalHalfSizeX = 0.23*m;
+		G4double ecalCrystalHalfSizeY = 0.045*m; 
+		G4double ecalCrystalHalfSizeZ  = 0.045*m;
+		G4double nEcalRows = 80;
+		G4double nEcalRings = 90;
 
-			G4VPhysicalVolume* physECAL = new G4PVPlacement(transformEcal, logicECAL, "physECAL", logicWorld, false, (i*100)+j, overlapCheck);
-			
-			G4VisAttributes* ecalVis = new G4VisAttributes(G4Colour(0.4,1.0,0.4)); // light green
-			ecalVis->SetForceSolid(true);
-			logicECAL->SetVisAttributes(ecalVis);
+		G4Box* solidECAL = new G4Box("solidECAL", ecalCrystalHalfSizeX, ecalCrystalHalfSizeY, ecalCrystalHalfSizeZ);
+		logicECAL = new G4LogicalVolume(solidECAL, PbWO4, "logicECAL");
+
+		for(G4int i = 0; i < nEcalRows; i++) 
+		{
+			for(G4int j = 0; j < nEcalRings; j++) 
+			{
+				G4Rotate3D rotZEcal(j*(360/nEcalRings)*deg, G4ThreeVector(0,0,1));
+				G4Translate3D transXEcal(G4ThreeVector(ecalCrystalHalfSizeY/tan((360/nEcalRings)/2*deg)*mm + ecalCrystalHalfSizeX*mm, 0*mm, -ecalHalfLength+(2*i*ecalCrystalHalfSizeZ)*mm));
+				G4Transform3D transformEcal = (rotZEcal)*(transXEcal);
+
+				G4VPhysicalVolume* physECAL = new G4PVPlacement(transformEcal, logicECAL, "physECAL", logicWorld, false, (i*100)+j, overlapCheck);
+				
+				G4VisAttributes* ecalVis = new G4VisAttributes(G4Colour(0.4,1.0,0.4)); // light green
+				ecalVis->SetForceSolid(true);
+				logicECAL->SetVisAttributes(ecalVis);
+				/*
+				G4ThreeVector translation = transformEcal.getTranslation();
+				G4RotationMatrix rotation = transformEcal.getRotation().inverse(); 
+
+				G4cout << "TransformECAL[" << i << "][" << j << "]:" << G4endl;
+				G4cout << "  Translation: " << translation << G4endl;
+				G4cout << "  Rotation Matrix: " << G4endl;
+				G4cout << "    " << rotation.xx() << " " << rotation.xy() << " " << rotation.xz() << G4endl;
+				G4cout << "    " << rotation.yx() << " " << rotation.yy() << " " << rotation.yz() << G4endl;
+				G4cout << "    " << rotation.zx() << " " << rotation.zy() << " " << rotation.zz() << G4endl;
+				*/
+			}
 		}
+	}
+
+	if(useECAL && calibrationMode)
+	{
+		G4double ecalInnerRadius = 1.00*m;
+		G4double ecalOuterRadius = 4.00*m;
+		G4double ecalHalfLength  = 3.6*m;
+
+		G4Tubs* solidECAL = new G4Tubs("solidECAL", ecalInnerRadius, ecalOuterRadius, ecalHalfLength, 0.*deg, 360.*deg);
+		G4LogicalVolume* logicECAL = new G4LogicalVolume(solidECAL, PbWO4, "logicECAL");
+		ecalLVs.push_back(logicECAL);
+		G4VPhysicalVolume* physECAL = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicECAL, "physECAL", logicWorld, false, 0, overlapCheck);
+
+		G4VisAttributes* ecalVis = new G4VisAttributes(G4Colour(0.4,1.0,0.4)); // light green
+		ecalVis->SetForceSolid(true);
+		logicECAL->SetVisAttributes(ecalVis);
 	}
 
 	//**********************************************************************************
 
 	//Stainless Steel layer between ECAL and HCAL
-	G4double steelInnerRadius = 1.77*m;  
-	G4double steelOuterRadius = 1.95*m;
-	G4double steelHalfLength  = 4.4*m;
+	if(useStainlessSteel && useHCAL)
+	{
+		G4double steelInnerRadius = 1.77*m;  
+		G4double steelOuterRadius = 1.95*m;
+		G4double steelHalfLength  = 4.4*m;
 
-	G4Tubs* solidSteel = new G4Tubs("solidSteel", steelInnerRadius, steelOuterRadius, steelHalfLength, 0.*deg, 360.*deg);
-	G4LogicalVolume* logicSteel = new G4LogicalVolume(solidSteel, StainlessSteel, "logicSteel");
-	G4VPhysicalVolume* physSteel = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicSteel, "physSteel", logicWorld, false, 0, overlapCheck);
+		G4Tubs* solidSteel = new G4Tubs("solidSteel", steelInnerRadius, steelOuterRadius, steelHalfLength, 0.*deg, 360.*deg);
+		G4LogicalVolume* logicSteel = new G4LogicalVolume(solidSteel, StainlessSteel, "logicSteel");
+		G4VPhysicalVolume* physSteel = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicSteel, "physSteel", logicWorld, false, 0, overlapCheck);
 
-	G4VisAttributes* steelVis = new G4VisAttributes(G4Colour(0.7,0.7,0.7,0.7)); // metallic gray
-	steelVis->SetForceSolid(true);
-	logicSteel->SetVisAttributes(steelVis);
+		G4VisAttributes* steelVis = new G4VisAttributes(G4Colour(0.7,0.7,0.7,0.7)); // metallic gray
+		steelVis->SetForceSolid(true);
+		logicSteel->SetVisAttributes(steelVis);
+	}
 
 	//**********************************************************************************
 
 	//HCAL
-	G4double hcalInnerRadius = 1.95*m;
-	G4double hcalOuterRadius = 2.86*m;  // 1.95 + 17*(0.05 + 0.0037) = 2.8629m
-	G4double hcalHalfLength  = 4.4*m;
-
-	G4double brassThickness = 5.0*cm;
-	G4double scintillatorThickness = 3.7*mm;
-	G4double layerThickness = brassThickness + scintillatorThickness;
-	G4int hcalLayers = 17;
-
-	for(G4int i = 0; i < hcalLayers; i++) 
+	if(useHCAL)
 	{
-		G4double layerInnerRadius = hcalInnerRadius + i * layerThickness;
-		G4double brassOuterRadius = layerInnerRadius + brassThickness;
-		G4double scintOuterRadius = brassOuterRadius + scintillatorThickness;
+		G4double hcalInnerRadius = 1.95*m;
+		G4double hcalOuterRadius = 2.86*m;  // 1.95 + 17*(0.05 + 0.0037) = 2.8629m
+		G4double hcalHalfLength  = 4.4*m;
 
-		G4Tubs* solidBrassLayer = new G4Tubs("solidBrassLayer", layerInnerRadius, brassOuterRadius, hcalHalfLength, 0.*deg, 360.*deg);
-		G4LogicalVolume* logicBrassLayer = new G4LogicalVolume(solidBrassLayer, Brass, "logicBrassLayer");
-		hcalBrassLVs.push_back(logicBrassLayer);
-		new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicBrassLayer, "physBrassLayer", logicWorld, false, i+1, overlapCheck);
+		G4double brassThickness = 5.0*cm;
+		G4double scintillatorThickness = 3.7*mm;
+		G4double layerThickness = brassThickness + scintillatorThickness;
+		
+		G4int hcalLayers;
+		if(!calibrationMode)
+		{
+			hcalLayers = 17;
+		}
+		else
+		{
+			hcalLayers = 40;
+		}
 
-		G4Tubs* solidScintLayer = new G4Tubs("solidScintLayer", brassOuterRadius, scintOuterRadius, hcalHalfLength, 0.*deg, 360.*deg);
-		logicScintLayer = new G4LogicalVolume(solidScintLayer, Scintillator, "logicScintLayer");
-		hcalScintillatorLVs.push_back(logicScintLayer);
-		new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicScintLayer, "physScintLayer", logicWorld, false, i+1, overlapCheck);
+		for(G4int i = 0; i < hcalLayers; i++) 
+		{
+			G4double layerInnerRadius = hcalInnerRadius + i * layerThickness;
+			G4double brassOuterRadius = layerInnerRadius + brassThickness;
+			G4double scintOuterRadius = brassOuterRadius + scintillatorThickness;
 
-		G4VisAttributes* brassVis = new G4VisAttributes(G4Colour(0.8,0.6,0.2,0.8)); // brass color
-		brassVis->SetForceSolid(true);
-		logicBrassLayer->SetVisAttributes(brassVis);
+			G4Tubs* solidBrassLayer = new G4Tubs("solidBrassLayer", layerInnerRadius, brassOuterRadius, hcalHalfLength, 0.*deg, 360.*deg);
+			G4LogicalVolume* logicBrassLayer = new G4LogicalVolume(solidBrassLayer, Brass, "logicBrassLayer");
+			hcalBrassLVs.push_back(logicBrassLayer);
+			new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicBrassLayer, "physBrassLayer", logicWorld, false, i+1, overlapCheck);
 
-		G4VisAttributes* scintVis = new G4VisAttributes(G4Colour(0.2,0.8,1.0,0.8)); // light blue
-		scintVis->SetForceSolid(true);
-		logicScintLayer->SetVisAttributes(scintVis);
+			G4Tubs* solidScintLayer = new G4Tubs("solidScintLayer", brassOuterRadius, scintOuterRadius, hcalHalfLength, 0.*deg, 360.*deg);
+			logicScintLayer = new G4LogicalVolume(solidScintLayer, Scintillator, "logicScintLayer");
+			hcalScintillatorLVs.push_back(logicScintLayer);
+			new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicScintLayer, "physScintLayer", logicWorld, false, i+1, overlapCheck);
+
+			G4VisAttributes* brassVis = new G4VisAttributes(G4Colour(0.8,0.6,0.2,0.8)); // brass color
+			brassVis->SetForceSolid(true);
+			logicBrassLayer->SetVisAttributes(brassVis);
+
+			G4VisAttributes* scintVis = new G4VisAttributes(G4Colour(0.2,0.8,1.0,0.8)); // light blue
+			scintVis->SetForceSolid(true);
+			logicScintLayer->SetVisAttributes(scintVis);
+		}
 	}
 
 	//**********************************************************************************
 
 	//Stainless Steel layer between HCAL and Solenoid
-	G4double steelInnerRadius2 = 2.86*m;  
-	G4double steelOuterRadius2 = 2.95*m;  
-	G4double steelHalfLength2  = 6.6*m; 
+	if(useStainlessSteel && useSolenoid)
+	{
+		G4double steelInnerRadius2 = 2.86*m;  
+		G4double steelOuterRadius2 = 2.95*m;  
+		G4double steelHalfLength2  = 6.6*m; 
 
-	G4Tubs* solidSteel2 = new G4Tubs("solidSteel2", steelInnerRadius2, steelOuterRadius2, steelHalfLength2, 0.*deg, 360.*deg);
-	G4LogicalVolume* logicSteel2 = new G4LogicalVolume(solidSteel2, StainlessSteel, "logicSteel2");
-	G4VPhysicalVolume* physSteel2 = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicSteel2, "physSteel2", logicWorld, false, 0, overlapCheck);
+		G4Tubs* solidSteel2 = new G4Tubs("solidSteel2", steelInnerRadius2, steelOuterRadius2, steelHalfLength2, 0.*deg, 360.*deg);
+		G4LogicalVolume* logicSteel2 = new G4LogicalVolume(solidSteel2, StainlessSteel, "logicSteel2");
+		G4VPhysicalVolume* physSteel2 = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicSteel2, "physSteel2", logicWorld, false, 0, overlapCheck);
 
-	G4VisAttributes* steelVis2 = new G4VisAttributes(G4Colour(0.7,0.7,0.7,0.7)); // metallic gray
-	steelVis2->SetForceSolid(true);
-	logicSteel2->SetVisAttributes(steelVis2);
+		G4VisAttributes* steelVis2 = new G4VisAttributes(G4Colour(0.7,0.7,0.7,0.7)); // metallic gray
+		steelVis2->SetForceSolid(true);
+		logicSteel2->SetVisAttributes(steelVis2);
+	}
 
 	//**********************************************************************************
 
 	//Solenoid
-	G4double solenoidInnerRadius = 2.95*m;
-	G4double solenoidOuterRadius = 3.80*m;
-	G4double solenoidHalfLength  = 6.6*m;
+	if(useSolenoid)
+	{
+		G4double solenoidInnerRadius = 2.95*m;
+		G4double solenoidOuterRadius = 3.80*m;
+		G4double solenoidHalfLength  = 6.6*m;
 
-	G4Tubs* solidSolenoid = new G4Tubs("solidSolenoid", solenoidInnerRadius, solenoidOuterRadius, solenoidHalfLength, 0.*deg, 360.*deg);
-	G4LogicalVolume* logicSolenoid = new G4LogicalVolume(solidSolenoid, NbTi, "logicSolenoid");
-	G4VPhysicalVolume* physSolenoid = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicSolenoid, "physSolenoid", logicWorld, false, 0, overlapCheck);
-
+		G4Tubs* solidSolenoid = new G4Tubs("solidSolenoid", solenoidInnerRadius, solenoidOuterRadius, solenoidHalfLength, 0.*deg, 360.*deg);
+		G4LogicalVolume* logicSolenoid = new G4LogicalVolume(solidSolenoid, NbTi, "logicSolenoid");
+		G4VPhysicalVolume* physSolenoid = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicSolenoid, "physSolenoid", logicWorld, false, 0, overlapCheck);
+	}
+	
 	//**********************************************************************************
 
 	//Stainless Steel layer after Solenoid
-	G4double steelInnerRadius3 = 3.80*m;
-    	G4double steelOuterRadius3 = 3.84*m;
-    	G4double steelHalfLength3  = 6.6*m; 
-
-    	G4Tubs* solidSteel3 = new G4Tubs("solidSteel3", steelInnerRadius3, steelOuterRadius3, steelHalfLength3, 0.*deg, 360.*deg);
-    	G4LogicalVolume* logicSteel3 = new G4LogicalVolume(solidSteel3, StainlessSteel, "logicSteel3");
-    	G4VPhysicalVolume* physSteel3 = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicSteel3, "physSteel3", logicWorld, false, 0, overlapCheck);
-
-    	G4VisAttributes* steelVis3 = new G4VisAttributes(G4Colour(0.7,0.7,0.7,0.7)); // metallic gray
-    	steelVis3->SetForceSolid(true);
-    	logicSteel3->SetVisAttributes(steelVis3);
-
-	//**********************************************************************************
-
-	//single HCAL scintillator tile after solenoid
-	G4Tubs* solidScintLayer = new G4Tubs("solidScintLayer", steelOuterRadius3, steelOuterRadius3 + 1*cm, steelHalfLength3, 0.*deg, 360.*deg);
-	logicScintLayer = new G4LogicalVolume(solidScintLayer, Scintillator, "logicScintLayer");
-	hcalScintillatorLVs.push_back(logicScintLayer);
-	new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicScintLayer, "physScintLayer", logicWorld, false, 18, overlapCheck);
-
-	G4VisAttributes* scintVis = new G4VisAttributes(G4Colour(0.2,0.8,1.0,0.5)); // light blue
-	scintVis->SetForceSolid(true);
-	logicScintLayer->SetVisAttributes(scintVis);
-
-	//**********************************************************************************
-
-	//muon system
-	G4double aluminumThickness = 1*mm;
-	G4double gasThickness = 11*mm;
-	G4double dtThickness = (2*aluminumThickness)+gasThickness;
-	G4double dtLayers = 30;
-	G4double nMuonSystem = 4;
-	G4double ironYoke[4] = {0.0, 0.4, 0.61, 0.89}; //*m
-	G4double ironYokeSum[4] = {0.0, 0.4, 1.01, 1.90}; //*m
-	G4double muonSystemInnerRadius = 3.85*m;
-	G4double muonSystemHalfLength  = 6.6*m;
-
-	for(G4int i = 0; i < nMuonSystem; i++)
+	if(useStainlessSteel && useMuonSystem)
 	{
-		for(G4int j = 0; j < dtLayers; j++)
+		G4double steelInnerRadius3 = 3.80*m;
+		G4double steelOuterRadius3 = 3.84*m;
+		G4double steelHalfLength3  = 6.6*m; 
+
+		G4Tubs* solidSteel3 = new G4Tubs("solidSteel3", steelInnerRadius3, steelOuterRadius3, steelHalfLength3, 0.*deg, 360.*deg);
+		G4LogicalVolume* logicSteel3 = new G4LogicalVolume(solidSteel3, StainlessSteel, "logicSteel3");
+		G4VPhysicalVolume* physSteel3 = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicSteel3, "physSteel3", logicWorld, false, 0, overlapCheck);
+
+		G4VisAttributes* steelVis3 = new G4VisAttributes(G4Colour(0.7,0.7,0.7,0.7)); // metallic gray
+		steelVis3->SetForceSolid(true);
+		logicSteel3->SetVisAttributes(steelVis3);
+	}
+
+	//**********************************************************************************
+	
+	//muon system
+	if(useMuonSystem)
+	{
+		//single HCAL scintillator tile after solenoid
+		G4double steelInnerRadius3 = 3.80*m;
+		G4double steelOuterRadius3 = 3.84*m;
+		G4double steelHalfLength3  = 6.6*m; 
+
+		G4Tubs* solidScintLayer = new G4Tubs("solidScintLayer", steelOuterRadius3, steelOuterRadius3 + 1*cm, steelHalfLength3, 0.*deg, 360.*deg);
+		logicScintLayer = new G4LogicalVolume(solidScintLayer, Scintillator, "logicScintLayer");
+		hcalScintillatorLVs.push_back(logicScintLayer);
+		new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicScintLayer, "physScintLayer", logicWorld, false, 18, overlapCheck);
+
+		G4VisAttributes* scintVis = new G4VisAttributes(G4Colour(0.2,0.8,1.0,0.5)); // light blue
+		scintVis->SetForceSolid(true);
+		logicScintLayer->SetVisAttributes(scintVis);
+		
+		//Drift Tubes
+		G4double aluminumThickness = 1*mm;
+		G4double gasThickness = 11*mm;
+		G4double dtThickness = (2*aluminumThickness)+gasThickness;
+		G4double dtLayers = 30;
+		G4double nMuonSystem = 4;
+		G4double ironYoke[4] = {0.0, 0.4, 0.61, 0.89}; //*m
+		G4double ironYokeSum[4] = {0.0, 0.4, 1.01, 1.90}; //*m
+		G4double muonSystemInnerRadius = 3.85*m;
+		G4double muonSystemHalfLength  = 6.6*m;
+
+		for(G4int i = 0; i < nMuonSystem; i++)
 		{
-			G4double layerInnerRadius = muonSystemInnerRadius + j*dtThickness + ironYokeSum[i]*m + i*(dtLayers*dtThickness);
-			G4double bottomAluminumOuterRadius = layerInnerRadius + aluminumThickness;
-			G4double gasOuterRadius = bottomAluminumOuterRadius + gasThickness;
+			for(G4int j = 0; j < dtLayers; j++)
+			{
+				G4double layerInnerRadius = muonSystemInnerRadius + j*dtThickness + ironYokeSum[i]*m + i*(dtLayers*dtThickness);
+				G4double bottomAluminumOuterRadius = layerInnerRadius + aluminumThickness;
+				G4double gasOuterRadius = bottomAluminumOuterRadius + gasThickness;
 
-			G4Tubs* solidBottomAluminumLayer = new G4Tubs("solidBottomAluminumLayer", layerInnerRadius, bottomAluminumOuterRadius, muonSystemHalfLength, 0.*deg, 360.*deg);
-			G4LogicalVolume* logicBottomAluminumLayer = new G4LogicalVolume(solidBottomAluminumLayer, Aluminum, "logicBottomAluminumLayer");
-			muonBottomAluminumLVs.push_back(logicBottomAluminumLayer);
-			new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicBottomAluminumLayer, "physBottomAluminumLayer", logicWorld, false, 0, overlapCheck);
+				G4Tubs* solidBottomAluminumLayer = new G4Tubs("solidBottomAluminumLayer", layerInnerRadius, bottomAluminumOuterRadius, muonSystemHalfLength, 0.*deg, 360.*deg);
+				G4LogicalVolume* logicBottomAluminumLayer = new G4LogicalVolume(solidBottomAluminumLayer, Aluminum, "logicBottomAluminumLayer");
+				muonBottomAluminumLVs.push_back(logicBottomAluminumLayer);
+				new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicBottomAluminumLayer, "physBottomAluminumLayer", logicWorld, false, 0, overlapCheck);
 
-			G4Tubs* solidGasLayer = new G4Tubs("solidGasLayer", bottomAluminumOuterRadius, gasOuterRadius, muonSystemHalfLength, 0.*deg, 360.*deg);
-			logicGasLayer = new G4LogicalVolume(solidGasLayer, ArCO2, "logicGasLayer");
-			muonGasLVs.push_back(logicGasLayer);
-			new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicGasLayer, "physGasLayer", logicWorld, false, (i*30)+(j+1), overlapCheck);
+				G4Tubs* solidGasLayer = new G4Tubs("solidGasLayer", bottomAluminumOuterRadius, gasOuterRadius, muonSystemHalfLength, 0.*deg, 360.*deg);
+				logicGasLayer = new G4LogicalVolume(solidGasLayer, ArCO2, "logicGasLayer");
+				muonGasLVs.push_back(logicGasLayer);
+				new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicGasLayer, "physGasLayer", logicWorld, false, (i*30)+(j+1), overlapCheck);
 
-			G4VisAttributes* tubeGasVis = new G4VisAttributes(G4Colour(0.3, 0.6, 1.0, 0.3)); // transparent blue
-			tubeGasVis->SetForceSolid(true);
-			logicGasLayer->SetVisAttributes(tubeGasVis);
+				G4VisAttributes* tubeGasVis = new G4VisAttributes(G4Colour(0.3, 0.6, 1.0, 0.3)); // transparent blue
+				tubeGasVis->SetForceSolid(true);
+				logicGasLayer->SetVisAttributes(tubeGasVis);
 
-			G4Tubs* solidTopAluminumLayer = new G4Tubs("solidTopAluminumLayer", gasOuterRadius, gasOuterRadius+aluminumThickness, muonSystemHalfLength, 0.*deg, 360.*deg);
-			G4LogicalVolume* logicTopAluminumLayer = new G4LogicalVolume(solidTopAluminumLayer, Aluminum, "logicTopAluminumLayer");
-			muonTopAluminumLVs.push_back(logicTopAluminumLayer);
-			new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicTopAluminumLayer, "physTopAluminumLayer", logicWorld, false, 0, overlapCheck);
+				G4Tubs* solidTopAluminumLayer = new G4Tubs("solidTopAluminumLayer", gasOuterRadius, gasOuterRadius+aluminumThickness, muonSystemHalfLength, 0.*deg, 360.*deg);
+				G4LogicalVolume* logicTopAluminumLayer = new G4LogicalVolume(solidTopAluminumLayer, Aluminum, "logicTopAluminumLayer");
+				muonTopAluminumLVs.push_back(logicTopAluminumLayer);
+				new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicTopAluminumLayer, "physTopAluminumLayer", logicWorld, false, 0, overlapCheck);
+			}
+
+			//iron yoke
+			if(i==3){break;}
+
+			G4double yokeInnerRadius = muonSystemInnerRadius + (i+1)*(dtLayers*dtThickness) + ironYokeSum[i]*m;
+			G4double yokeOuterRadius = yokeInnerRadius + ironYoke[i+1]*m;
+
+			G4Tubs* solidIronYoke = new G4Tubs("solidIronYoke", yokeInnerRadius, yokeOuterRadius, muonSystemHalfLength, 0.*deg, 360.*deg);
+			G4LogicalVolume* logicIronYoke = new G4LogicalVolume(solidIronYoke, Fe, "logicIronYoke");
+			muonYokeLVs.push_back(logicIronYoke);
+			new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicIronYoke, "physIronYoke", logicWorld, false, 0, overlapCheck);
+			
+			G4VisAttributes* ironYokeVis = new G4VisAttributes(G4Colour(0.8, 0.2, 0.2, 0.4)); // red color
+			ironYokeVis->SetForceSolid(true);
+			logicIronYoke->SetVisAttributes(ironYokeVis);
 		}
-
-		if(i==3){break;}
-
-		G4double yokeInnerRadius = muonSystemInnerRadius + (i+1)*(dtLayers*dtThickness) + ironYokeSum[i]*m;
-		G4double yokeOuterRadius = yokeInnerRadius + ironYoke[i+1]*m;
-
-		G4Tubs* solidIronYoke = new G4Tubs("solidIronYoke", yokeInnerRadius, yokeOuterRadius, muonSystemHalfLength, 0.*deg, 360.*deg);
-        G4LogicalVolume* logicIronYoke = new G4LogicalVolume(solidIronYoke, Fe, "logicIronYoke");
-		muonYokeLVs.push_back(logicIronYoke);
-        new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicIronYoke, "physIronYoke", logicWorld, false, 0, overlapCheck);
-        
-        G4VisAttributes* ironYokeVis = new G4VisAttributes(G4Colour(0.8, 0.2, 0.2, 0.4)); // red color
-        ironYokeVis->SetForceSolid(true);
-        logicIronYoke->SetVisAttributes(ironYokeVis);
 	}
 
 	//**********************************************************************************
@@ -364,53 +416,14 @@ void MyDetectorConstruction::ConstructSDandField()
     sdManager->AddNewDetector(HCAL);
     sdManager->AddNewDetector(DT);
 
-    logicECAL->SetSensitiveDetector(ECAL);
+    if (useECAL && !calibrationMode)
+	logicECAL->SetSensitiveDetector(ECAL);
+	if (useECAL && calibrationMode)
+	for (auto lv : ecalLVs)
+        lv->SetSensitiveDetector(ECAL);
     for (auto lv : hcalScintillatorLVs)
         lv->SetSensitiveDetector(HCAL);
     for (auto lv : muonGasLVs)
         lv->SetSensitiveDetector(DT);
-
-	/*
-    // Magnetic Fields - not working correctly right now
-    if (useMagneticField)
-    {
-        G4bool forceToAllDaughters = true;
-
-        // 4T Solenoid Field (inside)
-        fSolenoidField = new MagneticField(4.0 * tesla);
-        fSolenoidFieldMgr = new G4FieldManager();
-        fSolenoidFieldMgr->SetDetectorField(fSolenoidField);
-        fSolenoidFieldMgr->CreateChordFinder(fSolenoidField);
-
-        fSolenoidFieldLogical->SetFieldManager(fSolenoidFieldMgr, forceToAllDaughters);
-        logicBeamPipe->SetFieldManager(fSolenoidFieldMgr, forceToAllDaughters);
-        logicAbsorber->SetFieldManager(fSolenoidFieldMgr, forceToAllDaughters);
-        logicECAL->SetFieldManager(fSolenoidFieldMgr, forceToAllDaughters);
-        logicSteel->SetFieldManager(fSolenoidFieldMgr, forceToAllDaughters);
-        logicSteel2->SetFieldManager(fSolenoidFieldMgr, forceToAllDaughters);
-        for (auto lv : hcalScintillatorLVs)
-            lv->SetFieldManager(fSolenoidFieldMgr, forceToAllDaughters);
-        for (auto lv : hcalBrassLVs)
-            lv->SetFieldManager(fSolenoidFieldMgr, forceToAllDaughters);
-
-        // -2.5T Return Field (outside)
-        fReturnField = new MagneticField(-2.5 * tesla);
-        fReturnFieldMgr = new G4FieldManager();
-        fReturnFieldMgr->SetDetectorField(fReturnField);
-        fReturnFieldMgr->CreateChordFinder(fReturnField);
-
-        fReturnFieldLogical->SetFieldManager(fReturnFieldMgr, forceToAllDaughters);
-        logicSteel3->SetFieldManager(fReturnFieldMgr, forceToAllDaughters);
-        logicScintLayer->SetFieldManager(fReturnFieldMgr, forceToAllDaughters);
-        for (auto lv : muonGasLVs)
-            lv->SetFieldManager(fReturnFieldMgr, forceToAllDaughters);
-        for (auto lv : muonTopAluminumLVs)
-            lv->SetFieldManager(fReturnFieldMgr, forceToAllDaughters);
-        for (auto lv : muonBottomAluminumLVs)
-            lv->SetFieldManager(fReturnFieldMgr, forceToAllDaughters);
-        for (auto lv : muonYokeLVs)
-            lv->SetFieldManager(fReturnFieldMgr, forceToAllDaughters);
-    }
-	*/
 }
 	

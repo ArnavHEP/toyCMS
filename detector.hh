@@ -18,6 +18,7 @@ public:
 	~MySensitiveDetector();
 
 	virtual G4bool ProcessHits(G4Step *aStep, G4TouchableHistory *ROhist) override;
+	int prevEvent=-1;
 };
 
 #endif

@@ -42,5 +42,6 @@ void MyRunAction::EndOfRunAction(const G4Run*)
   G4AnalysisManager *man = G4AnalysisManager::Instance();
   man->Write();
   man->CloseFile("output.root");
+  G4cout << "Root File Generated" << G4endl << G4endl;
 }
 

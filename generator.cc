@@ -15,7 +15,7 @@ void MyPrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
 {
 	G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
 	
-	G4ParticleDefinition *particle = particleTable->FindParticle("gamma");
+	G4ParticleDefinition *particle = particleTable->FindParticle("pi-");
 	
 	G4ThreeVector pos(0.,0.,0.);
 	G4ThreeVector mom;
@@ -25,7 +25,7 @@ void MyPrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
 	
 	fParticleGun->SetParticlePosition(pos);
 	fParticleGun->SetParticleMomentumDirection(mom.unit());
-	fParticleGun->SetParticleMomentum(50*GeV);
+	fParticleGun->SetParticleMomentum(10*GeV);
 	fParticleGun->SetParticleDefinition(particle);
 	fParticleGun->GeneratePrimaryVertex(anEvent);
 }

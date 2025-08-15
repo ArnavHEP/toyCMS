@@ -11,7 +11,6 @@
 #include "G4SystemOfUnits.hh"
 #include "G4SDManager.hh"
 #include "G4FieldManager.hh"
-#include "MagneticField.hh"
 
 #include "detector.hh"
 
@@ -25,8 +24,18 @@ public:
 	
 private:
 	G4bool overlapCheck = false;
-	G4bool useMagneticField = false; //not working right now
+	G4bool calibrationMode = false; // use with only ECAL or HCAL present
 
+	// Detector element toggles
+	G4bool useBeamPipe = true;
+	G4bool useAbsorber = true;
+	G4bool useECAL = true;
+	G4bool useHCAL = true;
+	G4bool useSolenoid = false;
+	G4bool useStainlessSteel = false;
+	G4bool useMuonSystem = false; 
+
+	std::vector<G4LogicalVolume*> ecalLVs;
 	std::vector<G4LogicalVolume*> hcalScintillatorLVs;
 	std::vector<G4LogicalVolume*> muonGasLVs;
 	std::vector<G4LogicalVolume*> hcalBrassLVs;
@@ -42,14 +51,6 @@ private:
     G4LogicalVolume *logicSteel3;
     G4LogicalVolume *logicScintLayer;
     G4LogicalVolume *logicGasLayer;
-
-	MagneticField* fSolenoidField = nullptr;
-    MagneticField* fReturnField = nullptr;
-    G4FieldManager* fSolenoidFieldMgr = nullptr;
-    G4FieldManager* fReturnFieldMgr = nullptr;
-	
-    G4LogicalVolume* fSolenoidFieldLogical = nullptr;
-    G4LogicalVolume* fReturnFieldLogical = nullptr;
 
 	virtual void ConstructSDandField();
 };
