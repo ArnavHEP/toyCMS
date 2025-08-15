@@ -11,3 +11,14 @@
     cmake ..
     make
     ```
+4. To run simulation using Particle Gun:
+     ```bash
+        ./sim
+        ``` 
+5. To run simulation using hepMC file:
+     ```bash
+        ./sim -f fileName.hepmc
+        ```
+6. To add or remove detector elements control the boolean in construction.hh
+7. Particle Gun can be changed in generator.cc
+8. Output file defined in RunAction.cc
