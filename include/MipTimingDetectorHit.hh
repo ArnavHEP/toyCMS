@@ -42,11 +42,15 @@ class MipTimingDetectorHit : public G4VHit
     void SetPos(G4ThreeVector xyz) { fPos = xyz; }
     G4ThreeVector GetPos() const { return fPos; }
 
+    void SetPID(G4int pid) { fPID = pid; }
+    G4int GetPID() const { return fPID; }
+
   private:
     G4int fCrystalNo = -1;
     G4double fTime = 0.;
     G4double fEdep = 0.;
     G4ThreeVector fPos;
+    G4int fPID = -1;
 };
 
 using MipTimingDetectorHitsCollection = G4THitsCollection<MipTimingDetectorHit>;

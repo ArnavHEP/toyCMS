@@ -29,11 +29,11 @@ private:
 	G4bool calibrationMode = false; // when using this only keep ECAL or HCAL active
 
 	// Detector element toggles
-	G4bool useBeamPipe = true;
-	G4bool useAbsorber = false;
+	G4bool useBeamPipe = false;
+	G4bool useAbsorber = true;
 	G4bool useMTD = true;
 	G4bool useECAL = true;
-	G4bool useHCAL = true;
+	G4bool useHCAL = false;
 	G4bool useSolenoid = false;
 	G4bool useStainlessSteel = false;
 	G4bool useMuonSystem = false; 
