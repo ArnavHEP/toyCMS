@@ -19,7 +19,7 @@ int main(int argc, char** argv)
     std::cin >> response;
     bool useHepMC = (response == 'y' || response == 'Y');
     
-    std::cout << "Use visualisation? (y/n): ";
+    std::cout << "Use batchmode? (y/n): ";
     std::cin >> response;
     bool batchMode = (response == 'y' || response == 'Y');
 
