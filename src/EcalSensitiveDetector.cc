@@ -42,7 +42,7 @@ G4bool EcalSensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*)
         G4double pT = std::sqrt(mom.x()*mom.x() + mom.y()*mom.y());
         G4double charge = track->GetDefinition()->GetPDGCharge();
 
-        //if (pT < 1000*MeV) return true;
+        if (edep < 0.06*MeV) return true;
 
         //G4cout << "ECAl hit: " << track->GetDefinition()->GetParticleName() << track->GetDefinition()->GetPDGEncoding() << G4endl;
 
