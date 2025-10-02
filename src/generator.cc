@@ -15,7 +15,7 @@ void MyPrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
 {
 	G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
 	
-	G4ParticleDefinition *particle = particleTable->FindParticle("gamma");
+	G4ParticleDefinition *particle = particleTable->FindParticle("pi-");
 	
 	G4ThreeVector pos(0.,0.,0.);
 	G4ThreeVector mom;

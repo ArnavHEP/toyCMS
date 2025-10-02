@@ -38,15 +38,30 @@ G4bool EcalSensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*)
         auto edep = step->GetTotalEnergyDeposit();
         if (edep==0.) return true;
 
+        G4ThreeVector mom = track->GetMomentum();
+        G4double pT = std::sqrt(mom.x()*mom.x() + mom.y()*mom.y());
+        G4double charge = track->GetDefinition()->GetPDGCharge();
+
+        //if (pT < 1000*MeV) return true;
+
+        //G4cout << "ECAl hit: " << track->GetDefinition()->GetParticleName() << track->GetDefinition()->GetPDGEncoding() << G4endl;
+
         G4ThreeVector pos = preStepPoint->GetPosition();
         auto absTime = preStepPoint->GetGlobalTime();
         auto dist = pos.mag();
         auto hitTime = absTime - (dist/CLHEP::c_light);
+        G4int pid = track->GetDefinition()->GetPDGEncoding();
 
         auto ix = -1;
-        for (size_t i=0; i<fHitsCollection->entries(); i++) {
-            if ((*fHitsCollection)[i]->GetCrystalNo() == copyNo &&
-                fabs((*fHitsCollection)[i]->GetTime() - hitTime) <= 0.1*ns) {
+
+        size_t nEntries = fHitsCollection->entries();
+        size_t start = (nEntries > 50) ? nEntries - 50 : 0;
+        for (size_t i = nEntries; i-- > start; )
+        {
+            if (i > 0 && (*fHitsCollection)[i]->GetCrystalNo() == copyNo &&
+            (*fHitsCollection)[i]->GetPID() == pid && 
+            fabs((*fHitsCollection)[i]->GetTime() - hitTime) <= 0.1*ns)
+            {
                 (*fHitsCollection)[i]->AddEdep(edep);
                 ix = i;
                 break;
@@ -57,6 +72,7 @@ G4bool EcalSensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*)
             auto hit = new EmCalorimeterHit(copyNo, hitTime);
             hit->AddEdep(edep);
             hit->SetPos(pos);
+            hit->SetPID(pid);
             fHitsCollection->insert(hit);
         }
     }

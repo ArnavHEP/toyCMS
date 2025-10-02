@@ -145,9 +145,9 @@ G4VPhysicalVolume *MyDetectorConstruction::Construct()
 	//Absorber
 	if(useAbsorber)
 	{
-		G4double absorberInnerRadius = 0.50*m;
-		G4double absorberOuterRadius = 1.10*m; //max allowed : 1.13
-		G4double absorberHalfLength  = 2.85*m;
+		G4double absorberInnerRadius = 0.05*m;
+		G4double absorberOuterRadius = 0.65*m; //max allowed : 1.13
+		G4double absorberHalfLength  = 3.6*m;
 
 		G4Tubs* solidAbsorber = new G4Tubs("solidAbsorber", absorberInnerRadius, absorberOuterRadius, absorberHalfLength, 0.*deg, 360.*deg);
 		G4LogicalVolume* logicAbsorber = new G4LogicalVolume(solidAbsorber, Cu, "logicAbsorber");

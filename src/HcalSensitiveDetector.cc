@@ -44,9 +44,14 @@ G4bool HcalSensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*)
         auto hitTime = absTime - (dist/CLHEP::c_light);
 
         auto ix = -1;
-        for (size_t i=0; i<fHitsCollection->entries(); i++) {
-            if ((*fHitsCollection)[i]->GetLayerNo() == copyNo &&
-                fabs((*fHitsCollection)[i]->GetTime() - hitTime) <= 0.1*ns) {
+
+        size_t nEntries = fHitsCollection->entries();
+        size_t start = (nEntries > 50) ? nEntries - 50 : 0;
+        for (size_t i = nEntries; i-- > start; )
+        {
+            if (i > 0 && (*fHitsCollection)[i]->GetLayerNo() == copyNo && 
+            fabs((*fHitsCollection)[i]->GetTime() - hitTime) <= 0.1*ns)
+            {
                 (*fHitsCollection)[i]->AddEdep(edep);
                 ix = i;
                 break;

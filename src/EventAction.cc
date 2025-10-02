@@ -62,7 +62,9 @@ void EventAction::EndOfEventAction(const G4Event* event)
             analysisManager->FillNtupleDColumn(0, 2, pos.y());
             analysisManager->FillNtupleDColumn(0, 3, pos.z());
             analysisManager->FillNtupleDColumn(0, 4, hit->GetTime());
-            analysisManager->FillNtupleIColumn(0, 5, EventID);
+            analysisManager->FillNtupleDColumn(0, 5, hit->GetEdep());
+            analysisManager->FillNtupleIColumn(0, 6, hit->GetPID());
+            analysisManager->FillNtupleIColumn(0, 7, EventID);
             analysisManager->AddNtupleRow(0);
         }
     }
@@ -82,7 +84,8 @@ void EventAction::EndOfEventAction(const G4Event* event)
             analysisManager->FillNtupleDColumn(1, 3, pos.z());
             analysisManager->FillNtupleDColumn(1, 4, hit->GetTime());
             analysisManager->FillNtupleDColumn(1, 5, hit->GetEdep());
-            analysisManager->FillNtupleIColumn(1, 6, EventID);
+            analysisManager->FillNtupleIColumn(1, 6, hit->GetPID());
+            analysisManager->FillNtupleIColumn(1, 7, EventID);
             analysisManager->AddNtupleRow(1);
         }
     }

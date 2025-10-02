@@ -42,6 +42,9 @@ const std::map<G4String,G4AttDef>* MipTimingDetectorHit::GetAttDefs() const
 
     (*store)["Pos"]
       = G4AttDef("Pos","Position","Physics","G4BestUnit","G4ThreeVector");
+
+    (*store)["PID"]
+      = G4AttDef("PID","Particle ID","Physics","G4BestUnit","G4int");
   }
   return store;
 }
@@ -54,6 +57,7 @@ std::vector<G4AttValue>* MipTimingDetectorHit::CreateAttValues() const
   values->push_back(G4AttValue("CrystalNo", G4UIcommand::ConvertToString(fCrystalNo), ""));
   values->push_back(G4AttValue("Time", G4BestUnit(fTime,"Time"), ""));
   values->push_back(G4AttValue("Pos", G4BestUnit(fPos,"Length"), ""));
+  values->push_back(G4AttValue("PID", G4BestUnit(fPID,"ParticleID"), ""));
 
   return values;
 }
